@@ -42,7 +42,7 @@ public class Game extends Application {
             @Override
             public void handle(long l) {
                 floor.update(OBSTACLE_VELOCITY);
-                root.menuRender(bird, root.returnBackground(), floor);
+                root.menuRender(bird, floor);
             }
         };
 
@@ -68,18 +68,20 @@ public class Game extends Application {
                 topPipes.updateAll();
                 bottomPipes.updateAll();
                 // background image clears canvas
-                root.render(bird, root.returnBackground(), floor, topPipes, bottomPipes);
+                root.render(bird, floor, topPipes, bottomPipes);
 
                 addScore(root, topPipes, bird);
 
                 for (int i = 0; i < topPipes.size(); i ++) {
                     if (bird.intersects(topPipes.pipes.get(i)) || bird.intersects(bottomPipes.pipes.get(i))) {
                         this.stop();
+                        root.showGameOver();
                     }
                 }
 
                 if (bird.intersects(floor)) {
                     this.stop();
+                    root.showGameOver();
                 }
             }
         };
@@ -99,13 +101,15 @@ public class Game extends Application {
         root.menu.getStartButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                root.getChildren().remove(root.menu);
+                root.startGame();
                 menuLoop.stop();
-                root.getScoreLabel().setVisible(true);
                 gameTimer.start();
             }
         });
     }
+
+
+
     public void addPipes (PipeQueue top, PipeQueue bottom, GameView root, int xPos, int pipeNum) {
         top.add(new Pipe(root.topPipes.get(pipeNum), 0, xPos, root.topPipes.get(pipeNum).getWidth(),
                 root.topPipes.get(pipeNum).getHeight()));

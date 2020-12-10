@@ -22,29 +22,31 @@ public class StartMenu extends Pane {
     }
 
     public StartMenu () {
-        Pane menuPane = new Pane();
+        Pane startPane = new Pane();
+        startPane.setPrefSize(MENU_WIDTH, MENU_HEIGHT);
 
         logo = new Image("assets/textures/title.png");
+        String buttonStyle = "-fx-font: 14 Impact; -fx-font-weight: bold; -fx-base: rgb(255,145,0); -fx-text-fill: " +
+                "rgb(255,255,255); -fx-border-width: 1; -fx-border-color: rgb(255,255,255)";
+
         canvas = new Canvas(logo.getWidth(), logo.getHeight());
         gc = canvas.getGraphicsContext2D();
         gc.drawImage(logo, 0, 0);
         canvas.relocate(50, 0);
 
         startButton = new Button("START");
-        startButton.setStyle("-fx-font: 14 Impact; -fx-font-weight: bold; -fx-base: rgb(255,145,0); " +
-                "-fx-text-fill: rgb(255,255,255); -fx-border-width: 1; -fx-border-color: rgb(255,255,255)");
+        startButton.setStyle(buttonStyle);
         startButton.relocate(50, 200);
         startButton.setPrefSize(90,30);
 
         scoreButton = new Button("SCORE");
-        scoreButton.setStyle("-fx-font: 14 Impact; -fx-font-weight: bold; -fx-base: rgb(255,145,0); " +
-                "-fx-text-fill: rgb(255,255,255); -fx-border-width: 1; -fx-border-color: rgb(255,255,255)");
+        scoreButton.setStyle(buttonStyle);
         scoreButton.relocate(160, 200);
         scoreButton.setPrefSize(90, 30);
 
-        menuPane.getChildren().addAll(canvas, startButton, scoreButton);
+        startPane.getChildren().addAll(canvas, startButton, scoreButton);
 
-        getChildren().addAll(menuPane);
+        getChildren().addAll(startPane);
     }
 
 }

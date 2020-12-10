@@ -14,6 +14,7 @@ public class GameView extends Pane {
     Canvas canvas;
     GraphicsContext gc;
     StartMenu menu;
+    GameOverMenu endMenu;
     private Label scoreLabel;
 
     Image birdImage = new Image("assets/textures/birdSprite1.png");
@@ -25,10 +26,9 @@ public class GameView extends Pane {
 
 
     public GameView () {
-        System.out.println(javafx.scene.text.Font.getFamilies());
-        scoreLabel = new Label();
-        scoreLabel.setText("0");
-        scoreLabel.relocate(190, 60);
+        scoreLabel = new Label("0");
+        scoreLabel.relocate(175, 60);
+        scoreLabel.setMinSize(100, 100);
         scoreLabel.setStyle("-fx-max-width: 50; -fx-max-height: 50; -fx-font: 50 Impact; -fx-font-weight: bold; " +
                 "-fx-text-fill: rgb(255,255,255);");
         scoreLabel.setVisible(false);
@@ -42,29 +42,37 @@ public class GameView extends Pane {
         menu = new StartMenu();
         menu.relocate(50, 150);
 
+        endMenu = new GameOverMenu();
+        endMenu.relocate(50, 150);
+
         getChildren().addAll(canvas, menu, scoreLabel);
     }
 
     public Label getScoreLabel () {
         return  scoreLabel;
     }
+
+    public void updateScoreLabel (int score) {
+        scoreLabel.setText(Integer.toString(score));
+    }
+
     public Image returnBackground () {
         return background;
     }
 
-    public void initialRender (Bird bird, Floor floor) {
+    public void initialRender (Bird bird, Floor floor) { // Draws all static items once for start menu
         gc.drawImage(floorImage, floor.getxPos(), floor.getyPos());
         gc.drawImage(birdImage, bird.getxPos(), bird.getyPos());
     }
 
-    public void menuRender (Bird bird, Image background, Floor floor) {
+    public void menuRender (Bird bird, Floor floor) { // render loop for the start menu
         bird.animate();
         gc.drawImage(background, 0, 0);
         gc.drawImage(floor.getImage(), floor.getxPos(), floor.getyPos());
         gc.drawImage(bird.getImage(), 50, bird.getyPos());
     }
 
-    public void render (Bird bird, Image background, Floor floor, PipeQueue top, PipeQueue bottom) {
+    public void render (Bird bird, Floor floor, PipeQueue top, PipeQueue bottom) { // Function to render during gameplay, updates locations of all GameObjects
 
         bird.animate();
         gc.drawImage(background, 0, 0);
@@ -80,7 +88,7 @@ public class GameView extends Pane {
     }
 
 
-    public Image setBackground () {
+    public Image setBackground () { // Randomly sets the background to daytime or nighttime on load
         Random random = new Random();
         int randomBG = random.nextInt(2);
         String filePath;
@@ -96,7 +104,7 @@ public class GameView extends Pane {
         return background;
     }
 
-    public ArrayList<Image> loadPipes (boolean top) {
+    public ArrayList<Image> loadPipes (boolean top) { // Loads the possible pipe images from the textures folder
         ArrayList<Image> images = new ArrayList<>();
         String pipeType = "bottom";
 
@@ -111,7 +119,13 @@ public class GameView extends Pane {
         return images;
     }
 
-    public void updateScoreLabel (int score) {
-        scoreLabel.setText(Integer.toString(score));
+    public void startGame () {
+        getChildren().remove(menu);
+        scoreLabel.setVisible(true);
+    }
+
+    public void showGameOver () {
+       getChildren().remove(scoreLabel);
+       getChildren().addAll(endMenu);
     }
 }
