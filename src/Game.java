@@ -42,11 +42,14 @@ public class Game extends Application {
             }
         });
 
+        resetGameObjects(root);
+
         AnimationTimer menuLoop = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                floor.update(OBSTACLE_VELOCITY);
                 root.menuRender(bird, floor);
+                floor.update(OBSTACLE_VELOCITY);
+
             }
         };
 
@@ -64,7 +67,7 @@ public class Game extends Application {
         };
 
         menuLoop.start();
-        resetGameObjects(root);
+
 
         AnimationTimer gameTimer = new AnimationTimer()
         {
@@ -149,6 +152,7 @@ public class Game extends Application {
         if (!topPipes.isEmpty()) {
             topPipes.clear();
         }
+
         if (!bottomPipes.isEmpty()) {
             bottomPipes.clear();
         }
@@ -192,6 +196,7 @@ public class Game extends Application {
             }
         }
     }
+
     public static void main(String[] args) {
         launch(args);
     }

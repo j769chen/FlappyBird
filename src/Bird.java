@@ -42,6 +42,7 @@ public class Bird extends GameObject {
             this.setImage(birdImage1);
         }
     }
+
     @Override
     public void update(double yVelocity) {
         setyPos(this.getyPos() + yVelocity);

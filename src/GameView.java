@@ -60,11 +60,11 @@ public class GameView extends Pane {
         return background;
     }
 
-    public void menuRender (Bird bird, Floor floor) { // render loop for the start menu
+    public void menuRender (Bird bird, Floor floor) { // render loop for the start menu, not rendering pipes
         bird.animate();
         gc.drawImage(background, 0, 0);
         gc.drawImage(floorImage, floor.getxPos(), floor.getyPos());
-        gc.drawImage(birdImage, 50, bird.getyPos());
+        gc.drawImage(bird.getImage(), 50, bird.getyPos());
     }
 
     public void render (Bird bird, Floor floor, PipeQueue top, PipeQueue bottom) { // Function to render during gameplay, updates locations of all GameObjects
