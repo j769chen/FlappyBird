@@ -3,13 +3,11 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Game extends Application {
@@ -27,7 +25,7 @@ public class Game extends Application {
         aPane.getChildren().add(root);
 
         final boolean hitSpace[] = {false};
-
+        final boolean[] inGame = {false};
 
         topPipes = new PipeQueue();
         bottomPipes = new PipeQueue();
@@ -37,6 +35,12 @@ public class Game extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+
+        primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, k -> { // Prevents user from accidentally starting game using spacebar in menus
+            if ( k.getCode() == KeyCode.SPACE && !inGame[0]){
+                k.consume();
+            }
+        });
 
         AnimationTimer menuLoop = new AnimationTimer() {
             @Override
@@ -61,7 +65,6 @@ public class Game extends Application {
 
         menuLoop.start();
         resetGameObjects(root);
-        root.initialRender(bird, floor);
 
         AnimationTimer gameTimer = new AnimationTimer()
         {
@@ -89,6 +92,7 @@ public class Game extends Application {
                 for (int i = 0; i < topPipes.size(); i ++) {
                     if (bird.intersects(topPipes.pipes.get(i)) || bird.intersects(bottomPipes.pipes.get(i))) {
                         this.stop();
+                        inGame[0] = false;
                         onGameOver.start();
                         root.showGameOver();
                     }
@@ -96,10 +100,12 @@ public class Game extends Application {
 
                 if (bird.intersects(floor)) {
                     this.stop();
+                    inGame[0] = false;
                     root.showGameOver();
                 }
                 else if (bird.getyPos() < 0) {
                     this.stop();
+                    inGame[0] = false;
                     onGameOver.start();
                     root.showGameOver();
                 }
@@ -121,6 +127,7 @@ public class Game extends Application {
                 root.startGame();
                 menuLoop.stop();
                 gameTimer.start();
+                inGame[0] = true;
             }
         });
 
@@ -129,7 +136,6 @@ public class Game extends Application {
             public void handle(ActionEvent actionEvent) {
                 root.resetGameView();
                 resetGameObjects(root);
-                root.initialRender(bird, floor);
                 menuLoop.start();
             }
         });
@@ -147,7 +153,7 @@ public class Game extends Application {
             bottomPipes.clear();
         }
 
-        initialize(topPipes, bottomPipes, root);
+        initializePipes(topPipes, bottomPipes, root);
     }
 
     public void addPipes (PipeQueue top, PipeQueue bottom, GameView root, int xPos, int pipeNum) { // Helper function to add pipes to both top and bottom queues
@@ -168,7 +174,7 @@ public class Game extends Application {
         bottom.remove();
     }
 
-    public void initialize(PipeQueue top, PipeQueue bottom, GameView root) { // Fills the pipe queue with 7 pipes to begin
+    public void initializePipes(PipeQueue top, PipeQueue bottom, GameView root) { // Fills the pipe queue with 7 pipes to begin
         Random randInt = new Random();
         int pipeToGenerate;
 

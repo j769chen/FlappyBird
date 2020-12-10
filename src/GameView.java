@@ -60,21 +60,14 @@ public class GameView extends Pane {
         return background;
     }
 
-    public void initialRender (Bird bird, Floor floor) { // Draws all static items once for start menu
-        gc.drawImage(background, 0 , 0);
-        gc.drawImage(floorImage, floor.getxPos(), floor.getyPos());
-        gc.drawImage(birdImage, bird.getxPos(), bird.getyPos());
-    }
-
     public void menuRender (Bird bird, Floor floor) { // render loop for the start menu
         bird.animate();
         gc.drawImage(background, 0, 0);
-        gc.drawImage(floor.getImage(), floor.getxPos(), floor.getyPos());
-        gc.drawImage(bird.getImage(), 50, bird.getyPos());
+        gc.drawImage(floorImage, floor.getxPos(), floor.getyPos());
+        gc.drawImage(birdImage, 50, bird.getyPos());
     }
 
     public void render (Bird bird, Floor floor, PipeQueue top, PipeQueue bottom) { // Function to render during gameplay, updates locations of all GameObjects
-
         bird.animate();
         gc.drawImage(background, 0, 0);
         gc.drawImage(floor.getImage(), floor.getxPos(), floor.getyPos());
