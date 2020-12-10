@@ -2,7 +2,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ public class GameView extends Pane {
     GraphicsContext gc;
     StartMenu menu;
     GameOverMenu endMenu;
+    ScoreMenu scoreMenu;
     private Label scoreLabel;
 
     Image birdImage = new Image("assets/textures/birdSprite1.png");
@@ -45,6 +45,8 @@ public class GameView extends Pane {
         endMenu = new GameOverMenu();
         endMenu.relocate(50, 150);
 
+        scoreMenu = new ScoreMenu();
+        scoreMenu.relocate(125, 170);
         getChildren().addAll(canvas, menu, scoreLabel);
     }
 
@@ -67,15 +69,17 @@ public class GameView extends Pane {
         gc.drawImage(bird.getImage(), 50, bird.getyPos());
     }
 
-    public void render (Bird bird, Floor floor, PipeQueue top, PipeQueue bottom) { // Function to render during gameplay, updates locations of all GameObjects
+    public void render (Bird bird, Floor floor, Queue top, Queue bottom) { // Function to render during gameplay, updates locations of all GameObjects
         bird.animate();
         gc.drawImage(background, 0, 0);
         gc.drawImage(floor.getImage(), floor.getxPos(), floor.getyPos());
-        for (Pipe p: top.pipes) {
+        for (Object o: top.items) {
+            Pipe p = (Pipe) o;
             gc.drawImage(p.getImage(), p.getxPos(), p.getyPos());
         }
 
-        for (Pipe p: bottom.pipes) {
+        for (Object o: bottom.items) {
+            Pipe p = (Pipe) o;
             gc.drawImage(p.getImage(), p.getxPos(), p.getyPos());
         }
         gc.drawImage(bird.getImage(), 50, bird.getyPos());
@@ -119,13 +123,27 @@ public class GameView extends Pane {
         scoreLabel.setVisible(true);
     }
 
-    public void showGameOver () {
+    public void showGameOver (int score, int bestScore) {
        scoreLabel.setVisible(false);
+       endMenu.setScoreNum(score);
+       endMenu.setBestScoreNum(bestScore);
        getChildren().addAll(endMenu);
     }
 
     public void resetGameView () {
         getChildren().remove(endMenu);
+        getChildren().remove(scoreMenu);
         getChildren().addAll(menu);
+    }
+
+    public void goToScoreMenu () {
+        if (getChildren().contains(endMenu)) {
+            getChildren().remove(endMenu);
+        }
+        if (getChildren().contains(menu)) {
+            getChildren().remove(menu);
+        }
+
+        getChildren().addAll(scoreMenu);
     }
 }

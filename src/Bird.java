@@ -14,19 +14,19 @@ public class Bird extends GameObject {
         this.yVelocity = yVelocity;
     }
 
-    public double getyVelocity() {
+    public double getyVelocity () {
         return yVelocity;
     }
 
-    public void setYVelocity(double yVelocity) {
+    public void setYVelocity (double yVelocity) {
         this.yVelocity = yVelocity;
     }
 
-    public void applyGravity(double time) {
+    public void applyGravity (double time) {
         yVelocity += GRAVITY*0.5*Math.pow(time, 2);
     }
 
-    public void jump() {
+    public void jump () {
         setYVelocity(-2.5);
         update(yVelocity);
     }
@@ -44,7 +44,7 @@ public class Bird extends GameObject {
     }
 
     @Override
-    public void update(double yVelocity) {
+    public void update (double yVelocity) {
         setyPos(this.getyPos() + yVelocity);
     }
 }

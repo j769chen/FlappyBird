@@ -16,6 +16,11 @@ public class GameOverMenu extends Pane {
         return scoreLabel;
     }
 
+    public void setScoreNum (int score) {
+        scoreNum.setText(Integer.toString(score));
+    }
+    public void setBestScoreNum (int bestScore) { bestScoreNum.setText(Integer.toString(bestScore));}
+
     Canvas canvas;
     GraphicsContext gc;
     private Image gameOver;
@@ -31,7 +36,6 @@ public class GameOverMenu extends Pane {
 
     public GameOverMenu () {
         Pane gameOverPane = new Pane();
-        gameOverPane.setPrefSize(MENU_WIDTH, MENU_HEIGHT);
         int scoreCardWidth = 90;
         int scoreCardHeight = 150;
 

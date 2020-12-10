@@ -25,36 +25,37 @@ public abstract class GameObject {
         this.image = image;
     }
 
-    public void setyPos(double yPos) {
+    public void setyPos (double yPos) {
         this.yPos = yPos;
     }
-    public void setxPos(double xPos) { this.xPos = xPos; }
+    public void setxPos (double xPos) { this.xPos = xPos; }
 
-    public double getyPos() {
+    public double getyPos () {
         return yPos;
     }
-    public double getxPos() {
+    public double getxPos () {
         return xPos;
     }
 
-    public double getHeight() {
+    public double getHeight () {
         return height;
     }
 
-    public double getWidth() {
+    public double getWidth () {
         return width;
     }
 
-    public Rectangle2D getBoundary() {
+    public Rectangle2D getBoundary () {
         return new Rectangle2D(xPos, yPos, width, height);
     }
 
-    public boolean intersects(GameObject o) {
+    public boolean intersects (GameObject o) {
         return o.getBoundary().intersects(this.getBoundary());
     }
 
-    public void render(GraphicsContext gc) {
+    public void render (GraphicsContext gc) {
         gc.drawImage(image, xPos, yPos);
     }
-    abstract public void update(double velocity); // Bird only changes yPos, pipes only xPos
+
+    abstract public void update (double velocity); // Bird only changes yPos, pipes only xPos
 }

@@ -13,17 +13,16 @@ public class StartMenu extends Pane {
     private Image logo;
     private Button startButton, scoreButton;
 
-    public Button getStartButton() {
+    public Button getStartButton () {
         return startButton;
     }
 
-    public Button getScoreButton() {
+    public Button getScoreButton () {
         return scoreButton;
     }
 
     public StartMenu () {
         Pane startPane = new Pane();
-        startPane.setPrefSize(MENU_WIDTH, MENU_HEIGHT);
 
         logo = new Image("assets/textures/title.png");
         String buttonStyle = "-fx-font: 14 Impact; -fx-font-weight: bold; -fx-base: rgb(255,145,0); -fx-text-fill: " +

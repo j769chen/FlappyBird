@@ -8,18 +8,24 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Random;
+import java.io.*;
 
 public class Game extends Application {
     protected final static int OBSTACLE_VELOCITY = -1;
+    private final static int MAX_SCORES = 5;
     private int score = 0;
+    private final String scoreFilePath = "src/assets/topScores.txt";
     Bird bird;
     Floor floor;
-    PipeQueue topPipes;
-    PipeQueue bottomPipes;
+    Queue topPipes;
+    Queue bottomPipes;
+    ArrayList<Integer> topScores;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start (Stage primaryStage) throws Exception {
         Pane aPane = new Pane();
         GameView root = new GameView();
         aPane.getChildren().add(root);
@@ -27,20 +33,22 @@ public class Game extends Application {
         final boolean hitSpace[] = {false};
         final boolean[] inGame = {false};
 
-        topPipes = new PipeQueue();
-        bottomPipes = new PipeQueue();
+        topPipes = new Queue();
+        bottomPipes = new Queue();
+
+        topScores = new ArrayList<>();
+
+        readScores();
+
+        if (topScores.isEmpty()) {
+            initializeEmptyScores();
+        }
 
         primaryStage.setTitle("Flappy Bird");
         Scene scene = new Scene(aPane);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
-
-        primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, k -> { // Prevents user from accidentally starting game using spacebar in menus
-            if ( k.getCode() == KeyCode.SPACE && !inGame[0]){
-                k.consume();
-            }
-        });
 
         resetGameObjects(root);
 
@@ -83,7 +91,7 @@ public class Game extends Application {
                 bird.applyGravity(t);
                 bird.update(bird.getyVelocity());
                 floor.update(OBSTACLE_VELOCITY);
-                if (topPipes.peek().getxPos() == -360) {
+                if (((Pipe)topPipes.peek()).getxPos() == -360) {
                     generatePipes(topPipes, bottomPipes, root);
                 }
                 topPipes.updateAll();
@@ -93,24 +101,27 @@ public class Game extends Application {
                 addScore(root, topPipes, bird);
 
                 for (int i = 0; i < topPipes.size(); i ++) {
-                    if (bird.intersects(topPipes.pipes.get(i)) || bird.intersects(bottomPipes.pipes.get(i))) {
+                    if (bird.intersects((Pipe)topPipes.items.get(i)) || bird.intersects((Pipe)bottomPipes.items.get(i))) {
                         this.stop();
                         inGame[0] = false;
                         onGameOver.start();
-                        root.showGameOver();
+                        updateTopScores();
+                        root.showGameOver(score, topScores.get(0));
                     }
                 }
 
                 if (bird.intersects(floor)) {
                     this.stop();
                     inGame[0] = false;
-                    root.showGameOver();
+                    updateTopScores();
+                    root.showGameOver(score, topScores.get(0));
                 }
                 else if (bird.getyPos() < 0) {
                     this.stop();
                     inGame[0] = false;
                     onGameOver.start();
-                    root.showGameOver();
+                    updateTopScores();
+                    root.showGameOver(score, topScores.get(0));
                 }
             }
         };
@@ -142,6 +153,37 @@ public class Game extends Application {
                 menuLoop.start();
             }
         });
+
+        root.menu.getScoreButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                root.goToScoreMenu();
+                setLeaderBoard(root);
+            }
+        });
+
+        root.endMenu.getScoreButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                root.goToScoreMenu();
+                setLeaderBoard(root);
+            }
+        });
+
+        root.scoreMenu.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                root.resetGameView();
+                resetGameObjects(root);
+                menuLoop.start();
+            }
+        });
+
+        primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, k -> { // Prevents user from accidentally starting game using spacebar in menus
+            if (k.getCode() == KeyCode.SPACE && !inGame[0]){
+                k.consume();
+            }
+        });
     }
 
     public void resetGameObjects (GameView root) { //sets all game objects to starting game state
@@ -160,7 +202,7 @@ public class Game extends Application {
         initializePipes(topPipes, bottomPipes, root);
     }
 
-    public void addPipes (PipeQueue top, PipeQueue bottom, GameView root, int xPos, int pipeNum) { // Helper function to add pipes to both top and bottom queues
+    public void addPipes (Queue top, Queue bottom, GameView root, int xPos, int pipeNum) { // Helper function to add pipes to both top and bottom queues
         top.add(new Pipe(root.topPipes.get(pipeNum), 0, xPos, root.topPipes.get(pipeNum).getWidth(),
                 root.topPipes.get(pipeNum).getHeight()));
         bottom.add(new Pipe(root.bottomPipes.get(pipeNum), 600 - root.bottomPipes.get
@@ -168,7 +210,7 @@ public class Game extends Application {
                 root.bottomPipes.get(pipeNum).getHeight()));
     }
 
-    public void generatePipes (PipeQueue top, PipeQueue bottom, GameView root) { // When first pipe in queue gets too far, it is removed and then a new pipe is added at the back of the queue
+    public void generatePipes (Queue top, Queue bottom, GameView root) { // When first pipe in queue gets too far, it is removed and then a new pipe is added at the back of the queue
         Random generator = new Random();
         int pipeToGenerate = generator.nextInt(5);
 
@@ -178,7 +220,7 @@ public class Game extends Application {
         bottom.remove();
     }
 
-    public void initializePipes(PipeQueue top, PipeQueue bottom, GameView root) { // Fills the pipe queue with 7 pipes to begin
+    public void initializePipes (Queue top, Queue bottom, GameView root) { // Fills the pipe queue with 7 pipes to begin
         Random randInt = new Random();
         int pipeToGenerate;
 
@@ -188,13 +230,70 @@ public class Game extends Application {
         }
     }
 
-    public void addScore(GameView root, PipeQueue top, Bird bird) {
-        for (int i = 0; i < top.pipes.size(); i++) {
-            if (top.pipes.get(i).getxPos() + top.pipes.get(i).getWidth() == bird.getxPos()) {
+    public void addScore (GameView root, Queue top, Bird bird) {
+        for (int i = 0; i < top.items.size(); i++) {
+            if (((Pipe)top.items.get(i)).getxPos() + ((Pipe)top.items.get(i)).getWidth() == bird.getxPos()) {
                 score++;
                 root.updateScoreLabel(score);
             }
         }
+    }
+
+    public void initializeEmptyScores () {
+        for (int i = 0; i < 5; i ++) {
+            topScores.add(0);
+        }
+    }
+
+    public void readScores () {
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(scoreFilePath));
+
+            while (in.ready()) {
+                topScores.add(Integer.parseInt(in.readLine()));
+            }
+
+            in.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Score file could not be found");
+        }
+        catch (IOException e) {
+            System.out.println("Error reading in scores");
+        }
+    }
+
+    public void updateTopScoreFile () { //Helper function to write top scores to file
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(scoreFilePath));
+
+            for (int i = 0; i < MAX_SCORES; i++) {
+                out.println(topScores.get(i));
+            }
+
+            out.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Score file could not be found");
+        }
+        catch (IOException e) {
+            System.out.println("Error writing scores to file");
+        }
+    }
+
+    public void updateTopScores () { // Updates topScores ArrayList and file
+        for (int i = 0; i < MAX_SCORES; i++) {
+            if (score > topScores.get(i)) {
+                topScores.add(i, score);
+                topScores.remove(MAX_SCORES);
+                break;
+            }
+        }
+        updateTopScoreFile();
+    }
+
+    public void setLeaderBoard (GameView root) { //Sets values in leaderboard to corresponding values from Arraylist
+        root.scoreMenu.setScoreboard(topScores);
     }
 
     public static void main(String[] args) {

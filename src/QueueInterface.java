@@ -1,19 +1,19 @@
 public interface QueueInterface {
     //Adds the given object to the end of the queue
-    void add(Pipe p);
+    void add (Object o);
 
     //Removes and returns the first object in the queue
-    Pipe remove();
+    Object remove ();
 
     //Returns the first object in the queue
-    Pipe peek();
+    Object peek ();
 
     //Returns the number of elements in the queue
-    int size();
+    int size ();
 
     //True if the queue is empty, false otherwise
-    boolean isEmpty();
+    boolean isEmpty ();
 
     //Removes all items from the queue
-    void clear();
+    void clear ();
 }
