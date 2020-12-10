@@ -78,7 +78,6 @@ public class GameView extends Pane {
         bird.animate();
         gc.drawImage(background, 0, 0);
         gc.drawImage(floor.getImage(), floor.getxPos(), floor.getyPos());
-        gc.drawImage(bird.getImage(), 50, bird.getyPos());
         for (Pipe p: top.pipes) {
             gc.drawImage(p.getImage(), p.getxPos(), p.getyPos());
         }
@@ -86,6 +85,7 @@ public class GameView extends Pane {
         for (Pipe p: bottom.pipes) {
             gc.drawImage(p.getImage(), p.getxPos(), p.getyPos());
         }
+        gc.drawImage(bird.getImage(), 50, bird.getyPos());
     }
 
 

@@ -46,6 +46,19 @@ public class Game extends Application {
             }
         };
 
+        AnimationTimer onGameOver = new AnimationTimer() {
+            @Override
+            public void handle(long l) {
+                double t = 0.3;
+                bird.applyGravity(t);
+                bird.update(bird.getyVelocity());
+                root.render(bird, floor, topPipes, bottomPipes);
+                if (bird.intersects(floor)) {
+                    this.stop();
+                }
+            }
+        };
+
         menuLoop.start();
         resetGameObjects(root);
         root.initialRender(bird, floor);
@@ -69,7 +82,6 @@ public class Game extends Application {
                 }
                 topPipes.updateAll();
                 bottomPipes.updateAll();
-                // background image clears canvas
                 root.render(bird, floor, topPipes, bottomPipes);
 
                 addScore(root, topPipes, bird);
@@ -77,12 +89,18 @@ public class Game extends Application {
                 for (int i = 0; i < topPipes.size(); i ++) {
                     if (bird.intersects(topPipes.pipes.get(i)) || bird.intersects(bottomPipes.pipes.get(i))) {
                         this.stop();
+                        onGameOver.start();
                         root.showGameOver();
                     }
                 }
 
-                if (bird.intersects(floor) || bird.getyPos() < 0) {
+                if (bird.intersects(floor)) {
                     this.stop();
+                    root.showGameOver();
+                }
+                else if (bird.getyPos() < 0) {
+                    this.stop();
+                    onGameOver.start();
                     root.showGameOver();
                 }
             }
