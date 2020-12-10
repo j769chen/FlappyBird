@@ -36,10 +36,11 @@ public class GameOverMenu extends Pane {
         int scoreCardHeight = 150;
 
         gameOver = new Image("assets/textures/game_over.png");
+
         String buttonStyle = "-fx-font: 14 Impact; -fx-font-weight: bold; -fx-base: rgb(255,145,0); -fx-text-fill: " +
                 "rgb(255,255,255); -fx-border-width: 1; -fx-border-color: rgb(255,255,255)";
-
         String labelStyle = "-fx-font: 16 Impact; -fx-font-weight: bold;  -fx-text-fill: rgb(255,145,0)";
+        String numStyle = "-fx-font: 30 Impact; -fx-font-weight: bold;  -fx-text-fill: rgb(255,255,255)";
 
         canvas = new Canvas(gameOver.getWidth(), gameOver.getHeight() + 50 + scoreCardHeight);
         gc = canvas.getGraphicsContext2D();
@@ -52,10 +53,32 @@ public class GameOverMenu extends Pane {
 
         scoreLabel = new Label("SCORE");
         scoreLabel.setStyle(labelStyle);
-
         scoreLabel.relocate(130, 110);
 
-        gameOverPane.getChildren().addAll(canvas, scoreLabel);
+        scoreNum = new Label("0");
+        scoreNum.setStyle(numStyle);
+        scoreNum.relocate(140, 130);
+
+        bestScoreLabel = new Label("BEST");
+        bestScoreLabel.setStyle(labelStyle);
+        bestScoreLabel.relocate(135, 170);
+
+        bestScoreNum = new Label("0");
+        bestScoreNum.setStyle(numStyle);
+        bestScoreNum.relocate(140, 190);
+
+        resetButton = new Button("RESTART");
+        resetButton.setStyle(buttonStyle);
+        resetButton.relocate(50, 300);
+        resetButton.setPrefSize(90,30);
+
+        scoreButton = new Button("SCORE");
+        scoreButton.setStyle(buttonStyle);
+        scoreButton.relocate(160, 300);
+        scoreButton.setPrefSize(90, 30);
+
+        gameOverPane.getChildren().addAll(canvas, scoreLabel, scoreNum, bestScoreLabel, bestScoreNum, resetButton,
+                scoreButton);
 
         getChildren().addAll(gameOverPane);
     }

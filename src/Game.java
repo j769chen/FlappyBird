@@ -15,6 +15,10 @@ import java.util.Random;
 public class Game extends Application {
     protected final static int OBSTACLE_VELOCITY = -1;
     private int score = 0;
+    Bird bird;
+    Floor floor;
+    PipeQueue topPipes;
+    PipeQueue bottomPipes;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -24,19 +28,15 @@ public class Game extends Application {
 
         final boolean hitSpace[] = {false};
 
-        Bird bird = new Bird(root.birdImage, 300, root.birdImage.getWidth(), root.birdImage.getHeight(), 0);
-        Floor floor = new Floor(root.floorImage, 0, root.floorImage.getWidth(), root.floorImage.getHeight());
-        PipeQueue topPipes = new PipeQueue();
-        PipeQueue bottomPipes = new PipeQueue();
+
+        topPipes = new PipeQueue();
+        bottomPipes = new PipeQueue();
 
         primaryStage.setTitle("Flappy Bird");
         Scene scene = new Scene(aPane);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
-
-        initialize(topPipes, bottomPipes, root);
-        root.initialRender(bird, floor);
 
         AnimationTimer menuLoop = new AnimationTimer() {
             @Override
@@ -47,6 +47,8 @@ public class Game extends Application {
         };
 
         menuLoop.start();
+        resetGameObjects(root);
+        root.initialRender(bird, floor);
 
         AnimationTimer gameTimer = new AnimationTimer()
         {
@@ -79,15 +81,12 @@ public class Game extends Application {
                     }
                 }
 
-                if (bird.intersects(floor)) {
+                if (bird.intersects(floor) || bird.getyPos() < 0) {
                     this.stop();
                     root.showGameOver();
                 }
             }
         };
-
-//        gameTimer.start();
-
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -106,11 +105,34 @@ public class Game extends Application {
                 gameTimer.start();
             }
         });
+
+        root.endMenu.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                root.resetGameView();
+                resetGameObjects(root);
+                root.initialRender(bird, floor);
+                menuLoop.start();
+            }
+        });
     }
 
+    public void resetGameObjects (GameView root) { //sets all game objects to starting game state
+        bird = new Bird(root.birdImage, 300, root.birdImage.getWidth(), root.birdImage.getHeight(), 0);
+        floor = new Floor(root.floorImage, 0, root.floorImage.getWidth(), root.floorImage.getHeight());
+        score = 0;
 
+        if (!topPipes.isEmpty()) {
+            topPipes.clear();
+        }
+        if (!bottomPipes.isEmpty()) {
+            bottomPipes.clear();
+        }
 
-    public void addPipes (PipeQueue top, PipeQueue bottom, GameView root, int xPos, int pipeNum) {
+        initialize(topPipes, bottomPipes, root);
+    }
+
+    public void addPipes (PipeQueue top, PipeQueue bottom, GameView root, int xPos, int pipeNum) { // Helper function to add pipes to both top and bottom queues
         top.add(new Pipe(root.topPipes.get(pipeNum), 0, xPos, root.topPipes.get(pipeNum).getWidth(),
                 root.topPipes.get(pipeNum).getHeight()));
         bottom.add(new Pipe(root.bottomPipes.get(pipeNum), 600 - root.bottomPipes.get

@@ -61,6 +61,7 @@ public class GameView extends Pane {
     }
 
     public void initialRender (Bird bird, Floor floor) { // Draws all static items once for start menu
+        gc.drawImage(background, 0 , 0);
         gc.drawImage(floorImage, floor.getxPos(), floor.getyPos());
         gc.drawImage(birdImage, bird.getxPos(), bird.getyPos());
     }
@@ -121,11 +122,17 @@ public class GameView extends Pane {
 
     public void startGame () {
         getChildren().remove(menu);
+        scoreLabel.setText("0");
         scoreLabel.setVisible(true);
     }
 
     public void showGameOver () {
-       getChildren().remove(scoreLabel);
+       scoreLabel.setVisible(false);
        getChildren().addAll(endMenu);
+    }
+
+    public void resetGameView () {
+        getChildren().remove(endMenu);
+        getChildren().addAll(menu);
     }
 }
