@@ -233,7 +233,7 @@ public class Game extends Application {
         }
     }
 
-    public void addScore (GameView root, Queue top, Bird bird) {
+    public void addScore (GameView root, Queue top, Bird bird) {  // Updates the score when bird passes through a pipe
         for (int i = 0; i < top.getItems().size(); i++) {
             if (((Pipe)top.getItems().get(i)).getxPos() + ((Pipe)top.getItems().get(i)).getWidth() == bird.getxPos()) {
                 score++;
@@ -242,13 +242,13 @@ public class Game extends Application {
         }
     }
 
-    public void initializeEmptyScores () {
+    public void initializeEmptyScores () { // If the score file is empty, initialize the array with 5 0 values
         for (int i = 0; i < 5; i ++) {
             topScores.add(0);
         }
     }
 
-    public void readScores () {
+    public void readScores () { // Reads in scores from the score file
         try {
             BufferedReader in = new BufferedReader(new FileReader(scoreFilePath));
 

@@ -144,26 +144,26 @@ public class GameView extends Pane {
         return images;
     }
 
-    public void startGame () {
+    public void startGame () { // Function to start the game, removing the start menu and making the score counter visible
         getChildren().remove(menu);
         scoreLabel.setText("0");
         scoreLabel.setVisible(true);
     }
 
-    public void showGameOver (int score, int bestScore) {
+    public void showGameOver (int score, int bestScore) { // Function when game ends to remove score counter and show end screen
        scoreLabel.setVisible(false);
        endMenu.setScoreNum(score);
        endMenu.setBestScoreNum(bestScore);
        getChildren().addAll(endMenu);
     }
 
-    public void resetGameView () {
+    public void resetGameView () { // Function to reset the game to the start menu when user presses "restart"
         getChildren().remove(endMenu);
         getChildren().remove(scoreMenu);
         getChildren().addAll(menu);
     }
 
-    public void goToScoreMenu () {
+    public void goToScoreMenu () { // Takes user to the menu which displays the top 5 scores
         if (getChildren().contains(endMenu)) {
             getChildren().remove(endMenu);
         }
