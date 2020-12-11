@@ -27,6 +27,8 @@ public class Game extends Application {
     private String audioFilePath = "assets/audio/";
 
     private Sound fly, buttonClick, point, hit, die;
+    private boolean hitSpace;
+    private boolean inGame;
 
     @Override
     public void start (Stage primaryStage) throws Exception {
@@ -34,8 +36,8 @@ public class Game extends Application {
         GameView root = new GameView();
         aPane.getChildren().add(root);
 
-        final boolean hitSpace[] = {false};
-        final boolean[] inGame = {false};
+        hitSpace = false;
+        inGame = false;
 
         topPipes = new Queue();
         bottomPipes = new Queue();
@@ -72,7 +74,8 @@ public class Game extends Application {
                 double t = 0.3;
                 bird.applyGravity(t);
                 bird.update(bird.getyVelocity());
-                root.render(bird, floor, topPipes, bottomPipes);
+                root.render(bird, floor, topPipes, bottomPipes
+                );
                 if (bird.intersects(floor)) {
                     this.stop();
                 }
@@ -87,10 +90,10 @@ public class Game extends Application {
             public void handle(long currentNanoTime)
             {
                 double t = 0.3;
-                if (hitSpace[0]) {
+                if (hitSpace) {
                     bird.jump();
                     t = 0.3;
-                    hitSpace[0] = false;
+                    hitSpace = false;
                 }
 
                 bird.applyGravity(t);
@@ -111,7 +114,7 @@ public class Game extends Application {
                         this.stop();
                         hit.play();
                         die.play();
-                        inGame[0] = false;
+                        inGame = false;
                         onGameOver.start();
                         updateTopScores();
                         root.showGameOver(score, topScores.get(0));
@@ -121,7 +124,7 @@ public class Game extends Application {
                 if (bird.intersects(floor)) {
                     this.stop();
                     hit.play();
-                    inGame[0] = false;
+                    inGame = false;
                     updateTopScores();
                     root.showGameOver(score, topScores.get(0));
                 }
@@ -129,7 +132,7 @@ public class Game extends Application {
                     this.stop();
                     hit.play();
                     die.play();
-                    inGame[0] = false;
+                    inGame = false;
                     onGameOver.start();
                     updateTopScores();
                     root.showGameOver(score, topScores.get(0));
@@ -141,7 +144,7 @@ public class Game extends Application {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.SPACE) {
-                    hitSpace[0] = true;
+                    hitSpace = true;
                     fly.play();
                 }
             }
@@ -154,7 +157,7 @@ public class Game extends Application {
                 root.startGame();
                 menuLoop.stop();
                 gameTimer.start();
-                inGame[0] = true;
+                inGame = true;
             }
         });
 
@@ -197,7 +200,7 @@ public class Game extends Application {
         });
 
         primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, k -> { // Prevents user from accidentally starting game using spacebar in menus
-            if (k.getCode() == KeyCode.SPACE && !inGame[0]){
+            if (k.getCode() == KeyCode.SPACE && !inGame){
                 k.consume();
             }
         });
