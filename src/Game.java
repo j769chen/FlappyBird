@@ -24,6 +24,10 @@ public class Game extends Application {
     private Queue bottomPipes;
     private ArrayList<Integer> topScores;
 
+    private String audioFilePath = "assets/audio/";
+
+    private Sound fly, buttonClick, point, hit, die;
+
     @Override
     public void start (Stage primaryStage) throws Exception {
         Pane aPane = new Pane();
@@ -37,8 +41,9 @@ public class Game extends Application {
         bottomPipes = new Queue();
 
         topScores = new ArrayList<>();
-
         readScores();
+
+        setSounds();
 
         if (topScores.isEmpty()) {
             initializeEmptyScores();
@@ -104,6 +109,8 @@ public class Game extends Application {
                     if (bird.intersects((Pipe)topPipes.getItems().get(i)) || bird.intersects((Pipe)bottomPipes.getItems()
                             .get(i))) {
                         this.stop();
+                        hit.play();
+                        die.play();
                         inGame[0] = false;
                         onGameOver.start();
                         updateTopScores();
@@ -113,12 +120,15 @@ public class Game extends Application {
 
                 if (bird.intersects(floor)) {
                     this.stop();
+                    hit.play();
                     inGame[0] = false;
                     updateTopScores();
                     root.showGameOver(score, topScores.get(0));
                 }
                 else if (bird.getyPos() < 0) {
                     this.stop();
+                    hit.play();
+                    die.play();
                     inGame[0] = false;
                     onGameOver.start();
                     updateTopScores();
@@ -132,6 +142,7 @@ public class Game extends Application {
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.SPACE) {
                     hitSpace[0] = true;
+                    fly.play();
                 }
             }
         });
@@ -139,6 +150,7 @@ public class Game extends Application {
         root.getStartMenu().getStartButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonClick.play();
                 root.startGame();
                 menuLoop.stop();
                 gameTimer.start();
@@ -149,6 +161,7 @@ public class Game extends Application {
         root.getEndMenu().getResetButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonClick.play();
                 root.resetGameView();
                 resetGameObjects(root);
                 menuLoop.start();
@@ -158,6 +171,7 @@ public class Game extends Application {
         root.getStartMenu().getScoreButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonClick.play();
                 root.goToScoreMenu();
                 setLeaderBoard(root);
             }
@@ -166,6 +180,7 @@ public class Game extends Application {
         root.getEndMenu().getScoreButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonClick.play();
                 root.goToScoreMenu();
                 setLeaderBoard(root);
             }
@@ -174,6 +189,7 @@ public class Game extends Application {
         root.getScoreMenu().getResetButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                buttonClick.play();
                 root.resetGameView();
                 resetGameObjects(root);
                 menuLoop.start();
@@ -238,6 +254,7 @@ public class Game extends Application {
             if (((Pipe)top.getItems().get(i)).getxPos() + ((Pipe)top.getItems().get(i)).getWidth() == bird.getxPos()) {
                 score++;
                 root.updateScoreLabel(score);
+                point.play();
             }
         }
     }
@@ -297,6 +314,14 @@ public class Game extends Application {
 
     public void setLeaderBoard (GameView root) { //Sets values in leaderboard to corresponding values from Arraylist
         root.getScoreMenu().setScoreboard(topScores);
+    }
+
+    public void setSounds () {
+        fly = new Sound(audioFilePath + "sfx_wing.wav");
+        buttonClick = new Sound(audioFilePath + "sfx_swooshing.wav");
+        point = new Sound(audioFilePath + "sfx_point.wav");
+        hit = new Sound(audioFilePath + "sfx_hit.wav");
+        die = new Sound(audioFilePath + "sfx_die.wav");
     }
 
     public static void main(String[] args) {
