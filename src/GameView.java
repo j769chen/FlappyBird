@@ -8,22 +8,49 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameView extends Pane {
-    private int APP_WIDTH = 400;
-    private int APP_HEIGHT = 700;
-    Canvas canvas;
-    GraphicsContext gc;
-    StartMenu menu;
-    GameOverMenu endMenu;
-    ScoreMenu scoreMenu;
+    private final int APP_WIDTH = 400;
+    private final int APP_HEIGHT = 700;
+    private Canvas canvas;
+    private GraphicsContext gc;
+    private StartMenu menu;
+    private GameOverMenu endMenu;
+    private ScoreMenu scoreMenu;
     private Label scoreLabel;
 
-    Image birdImage = new Image("assets/textures/birdSprite1.png");
-    Image floorImage = new Image("assets/textures/floor.png");
-    Image background = setBackground();
+    private Image birdImage = new Image("assets/textures/birdSprite1.png");
+    private Image floorImage = new Image("assets/textures/floor.png");
+    private Image background = setBackground();
 
-    ArrayList<Image> topPipes = loadPipes(true);
-    ArrayList<Image> bottomPipes = loadPipes(false);
+    private ArrayList<Image> topPipes = loadPipes(true);
+    private ArrayList<Image> bottomPipes = loadPipes(false);
 
+    public Image getBirdImage () {
+        return birdImage;
+    }
+
+    public Image getFloorImage () {
+        return floorImage;
+    }
+
+    public ArrayList<Image> getTopPipes() {
+        return topPipes;
+    }
+
+    public ArrayList<Image> getBottomPipes() {
+        return bottomPipes;
+    }
+
+    public StartMenu getStartMenu () {
+        return menu;
+    }
+
+    public GameOverMenu getEndMenu() {
+        return endMenu;
+    }
+
+    public ScoreMenu getScoreMenu() {
+        return scoreMenu;
+    }
 
     public GameView () {
         scoreLabel = new Label("0");
@@ -73,12 +100,12 @@ public class GameView extends Pane {
         bird.animate();
         gc.drawImage(background, 0, 0);
         gc.drawImage(floor.getImage(), floor.getxPos(), floor.getyPos());
-        for (Object o: top.items) {
+        for (Object o: top.getItems()) {
             Pipe p = (Pipe) o;
             gc.drawImage(p.getImage(), p.getxPos(), p.getyPos());
         }
 
-        for (Object o: bottom.items) {
+        for (Object o: bottom.getItems()) {
             Pipe p = (Pipe) o;
             gc.drawImage(p.getImage(), p.getxPos(), p.getyPos());
         }

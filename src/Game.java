@@ -8,7 +8,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.io.*;
@@ -18,11 +17,12 @@ public class Game extends Application {
     private final static int MAX_SCORES = 5;
     private int score = 0;
     private final String scoreFilePath = "src/assets/topScores.txt";
-    Bird bird;
-    Floor floor;
-    Queue topPipes;
-    Queue bottomPipes;
-    ArrayList<Integer> topScores;
+
+    private Bird bird;
+    private Floor floor;
+    private Queue topPipes;
+    private Queue bottomPipes;
+    private ArrayList<Integer> topScores;
 
     @Override
     public void start (Stage primaryStage) throws Exception {
@@ -101,7 +101,8 @@ public class Game extends Application {
                 addScore(root, topPipes, bird);
 
                 for (int i = 0; i < topPipes.size(); i ++) {
-                    if (bird.intersects((Pipe)topPipes.items.get(i)) || bird.intersects((Pipe)bottomPipes.items.get(i))) {
+                    if (bird.intersects((Pipe)topPipes.getItems().get(i)) || bird.intersects((Pipe)bottomPipes.getItems()
+                            .get(i))) {
                         this.stop();
                         inGame[0] = false;
                         onGameOver.start();
@@ -135,7 +136,7 @@ public class Game extends Application {
             }
         });
 
-        root.menu.getStartButton().setOnAction(new EventHandler<ActionEvent>() {
+        root.getStartMenu().getStartButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 root.startGame();
@@ -145,7 +146,7 @@ public class Game extends Application {
             }
         });
 
-        root.endMenu.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
+        root.getEndMenu().getResetButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 root.resetGameView();
@@ -154,7 +155,7 @@ public class Game extends Application {
             }
         });
 
-        root.menu.getScoreButton().setOnAction(new EventHandler<ActionEvent>() {
+        root.getStartMenu().getScoreButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 root.goToScoreMenu();
@@ -162,7 +163,7 @@ public class Game extends Application {
             }
         });
 
-        root.endMenu.getScoreButton().setOnAction(new EventHandler<ActionEvent>() {
+        root.getEndMenu().getScoreButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 root.goToScoreMenu();
@@ -170,7 +171,7 @@ public class Game extends Application {
             }
         });
 
-        root.scoreMenu.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
+        root.getScoreMenu().getResetButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 root.resetGameView();
@@ -187,8 +188,10 @@ public class Game extends Application {
     }
 
     public void resetGameObjects (GameView root) { //sets all game objects to starting game state
-        bird = new Bird(root.birdImage, 300, root.birdImage.getWidth(), root.birdImage.getHeight(), 0);
-        floor = new Floor(root.floorImage, 0, root.floorImage.getWidth(), root.floorImage.getHeight());
+        bird = new Bird(root.getBirdImage(), 300, root.getBirdImage().getWidth(), root.getBirdImage().getHeight(),
+                0);
+        floor = new Floor(root.getFloorImage(), 0, root.getFloorImage().getWidth(),
+                root.getFloorImage().getHeight());
         score = 0;
 
         if (!topPipes.isEmpty()) {
@@ -203,11 +206,11 @@ public class Game extends Application {
     }
 
     public void addPipes (Queue top, Queue bottom, GameView root, int xPos, int pipeNum) { // Helper function to add pipes to both top and bottom queues
-        top.add(new Pipe(root.topPipes.get(pipeNum), 0, xPos, root.topPipes.get(pipeNum).getWidth(),
-                root.topPipes.get(pipeNum).getHeight()));
-        bottom.add(new Pipe(root.bottomPipes.get(pipeNum), 600 - root.bottomPipes.get
-                (pipeNum).getHeight(), xPos, root.bottomPipes.get(pipeNum).getWidth(),
-                root.bottomPipes.get(pipeNum).getHeight()));
+        top.add(new Pipe(root.getTopPipes().get(pipeNum), 0, xPos, root.getTopPipes().get(pipeNum).getWidth(),
+                root.getTopPipes().get(pipeNum).getHeight()));
+        bottom.add(new Pipe(root.getBottomPipes().get(pipeNum), 600 - root.getBottomPipes().get
+                (pipeNum).getHeight(), xPos, root.getBottomPipes().get(pipeNum).getWidth(),
+                root.getBottomPipes().get(pipeNum).getHeight()));
     }
 
     public void generatePipes (Queue top, Queue bottom, GameView root) { // When first pipe in queue gets too far, it is removed and then a new pipe is added at the back of the queue
@@ -231,8 +234,8 @@ public class Game extends Application {
     }
 
     public void addScore (GameView root, Queue top, Bird bird) {
-        for (int i = 0; i < top.items.size(); i++) {
-            if (((Pipe)top.items.get(i)).getxPos() + ((Pipe)top.items.get(i)).getWidth() == bird.getxPos()) {
+        for (int i = 0; i < top.getItems().size(); i++) {
+            if (((Pipe)top.getItems().get(i)).getxPos() + ((Pipe)top.getItems().get(i)).getWidth() == bird.getxPos()) {
                 score++;
                 root.updateScoreLabel(score);
             }
@@ -293,7 +296,7 @@ public class Game extends Application {
     }
 
     public void setLeaderBoard (GameView root) { //Sets values in leaderboard to corresponding values from Arraylist
-        root.scoreMenu.setScoreboard(topScores);
+        root.getScoreMenu().setScoreboard(topScores);
     }
 
     public static void main(String[] args) {

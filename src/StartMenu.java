@@ -5,11 +5,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.control.Button;
 
 public class StartMenu extends Pane {
-    private int MENU_WIDTH = 300;
-    private int MENU_HEIGHT = 400;
-
-    Canvas canvas;
-    GraphicsContext gc;
+    private Canvas canvas;
+    private GraphicsContext gc;
     private Image logo;
     private Button startButton, scoreButton;
 

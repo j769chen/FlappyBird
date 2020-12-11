@@ -3,7 +3,11 @@ import java.util.ArrayList;
 
 //ArrayList Implementation of queue for the pipes
 public class Queue implements QueueInterface {
-    ArrayList<Object> items;
+    private ArrayList<Object> items;
+
+    public ArrayList<Object> getItems() {
+        return items;
+    }
 
     public Queue() {
         items = new ArrayList<>();

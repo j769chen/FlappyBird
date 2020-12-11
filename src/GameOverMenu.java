@@ -7,9 +7,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public class GameOverMenu extends Pane {
-    private int MENU_WIDTH = 300;
-    private int MENU_HEIGHT = 500;
-
     private Label scoreLabel, scoreNum, bestScoreLabel, bestScoreNum;
 
     public Label getScoreLabel() {
@@ -21,8 +18,8 @@ public class GameOverMenu extends Pane {
     }
     public void setBestScoreNum (int bestScore) { bestScoreNum.setText(Integer.toString(bestScore));}
 
-    Canvas canvas;
-    GraphicsContext gc;
+    private Canvas canvas;
+    private GraphicsContext gc;
     private Image gameOver;
     private Button resetButton, scoreButton;
 

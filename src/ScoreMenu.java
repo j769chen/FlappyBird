@@ -16,8 +16,8 @@ public class ScoreMenu extends Pane {
 
     private Label[] scores;
 
-    Canvas canvas;
-    GraphicsContext gc;
+    private Canvas canvas;
+    private GraphicsContext gc;
 
     private Button resetButton;
 
