@@ -13,7 +13,7 @@ import java.util.Random;
 import java.io.*;
 
 public class Game extends Application {
-    protected final static int OBSTACLE_VELOCITY = -1;
+    private final static int OBSTACLE_VELOCITY = -1;
     private final static int MAX_SCORES = 5;
     private int score = 0;
     private final String scoreFilePath = "src/assets/topScores.txt";
@@ -29,6 +29,10 @@ public class Game extends Application {
     private Sound fly, buttonClick, point, hit, die;
     private boolean hitSpace;
     private boolean inGame;
+
+    public static int getObstacleVelocity() {
+        return OBSTACLE_VELOCITY;
+    }
 
     @Override
     public void start (Stage primaryStage) throws Exception {

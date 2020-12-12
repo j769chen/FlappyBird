@@ -44,7 +44,7 @@ public class Queue implements QueueInterface {
     }
     public void updateAll () { // Special method for Pipes to update every pipe's location
         for (Object o: items) {
-            ((Pipe)o).update(Game.OBSTACLE_VELOCITY);
+            ((Pipe)o).update(Game.getObstacleVelocity());
         }
     }
 }
